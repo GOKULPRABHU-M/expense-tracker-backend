@@ -1,0 +1,66 @@
+const express= require("express")
+const mongoose= require("mongoose")
+const cors=require("cors");
+const app=express();
+app.use(express.json());
+app.use(cors())
+mongoose.connect("mongodb+srv://kavigokul22_db_user:tjYsDptYgPIBZls2@cluster0.6cvgci3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+.then(() => console.log("MongoDB connected"))
+.catch(err => console.log(err));
+
+const expenseSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  amount:{type:Number,rquired:true}
+});
+
+const expense=mongoose.model("expense",expenseSchema);
+
+app.post("/add",async(req,res)=>{
+  console.log(req);
+  
+  const {title,amount}=req.body;
+  try{
+  const newexpense=new expense({title,amount});
+  await newexpense.save();
+  res.send("added")}
+  catch(err){
+    res.send(err);
+  }
+})
+app.get("/getallexpense",async (req,res)=>{
+
+  try{
+    const data=await expense.find();
+    console.log("hi")
+    res.send(data);
+  }
+  catch(err){
+    res.send(err);
+  }
+})
+app.delete("/deleteexpense",async(req,res)=>{
+  
+  const {_id}=req.body
+  console.log(_id)
+  try{
+    await expense.deleteOne({_id})
+    
+    res.send()
+  }
+  catch(err){
+    res.send(err)
+  }
+})
+app.put("/editexpense",async(req,res)=>{
+  
+  const {_id,title,amount}=req.body
+  try{
+    await expense.updateOne({_id:_id},{$set:{title:title,amount:amount}})
+    
+    res.send()
+  }
+  catch(err){
+    res.send(err)
+  }
+})
+app.listen(7000);
