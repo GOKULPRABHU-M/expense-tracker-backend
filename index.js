@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(cors())
-mongoose.connect("mongodb+srv://kavigokul22_db_user:tjYsDptYgPIBZls2@cluster0.6cvgci3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+mongoose.connect("mongodb+srv://kavigokul22_db_user:tjYsDptYgPIBZls2@cluster0.6cvgci3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0 ")
     .then(() => console.log("MongoDB connected"))
     .catch(err => console.log(err));
 
@@ -16,22 +16,24 @@ const expenseSchema = new mongoose.Schema({
     amount: {
         type: Number,
         rquired: true
-    }
+    },
+    date:{type:String,required:true}
 });
 
 const expense = mongoose.model("expense", expenseSchema);
 
 app.post("/add", async (req, res) => {
-    console.log(req);
 
     const {
         title,
         amount
     } = req.body;
+    const date=new Date().toLocaleDateString();
+    console.log(date);
     try {
         const newexpense = new expense({
             title,
-            amount
+            amount,date
         });
         await newexpense.save();
         res.send("added")
